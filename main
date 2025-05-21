@@ -7,6 +7,7 @@
 #set -e
 
 t1=$(jq -r .t1 config.json)
+no_csf=$( j1 -r .no_csf condifg.json )
 
 # Custom singularity runner
 singularity_run() {
@@ -16,5 +17,8 @@ singularity_run() {
 mkdir t1_brain
 mkdir mask
 
-singularity_run freesurfer/synthstrip:1.7-gpu mri_synthstrip  -i ${t1} -o ./t1_brain/t1.nii.gz -m ./mask/mask.nii.gz
+no_csf_opt=''
+[ "${no_csf}"  == "true" ] && { no_csf_opt=" --no-csf "; }
+
+singularity_run freesurfer/synthstrip:1.7-gpu mri_synthstrip  -i ${t1} -o ./t1_brain/t1.nii.gz -m ./mask/mask.nii.gz ${no_csf_opt}
 
