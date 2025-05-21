@@ -16,5 +16,5 @@ singularity_run() {
 mkdir t1_brain
 mkdir mask
 
-singularity_run freesurfer/synthstrip:1.7-gpu mri_synthstrip  -i ${t1} -o ./t1_brain/t1_stripped.nii.gz -m ./mask/mask.nii.gz
+singularity_run freesurfer/synthstrip:1.7-gpu mri_synthstrip  -i ${t1} -o ./t1_brain/t1.nii.gz -m ./mask/mask.nii.gz
 
