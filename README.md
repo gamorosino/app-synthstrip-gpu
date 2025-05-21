@@ -1,4 +1,4 @@
-# app-synthstrip
+# app-synthstrip-gpu
 SynthStrip: Skull-Stripping for Any Brain Image
 
 # Citation
