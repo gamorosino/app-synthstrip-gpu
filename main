@@ -23,10 +23,10 @@ no_csf_opt=''
 
 if [ "${gpu}" == "true" ]; then
 
-    freesurfer/synthstrip:1.7-gpu
+    docker=freesurfer/synthstrip:1.7-gpu
 else
 
-    freesurfer/synthstrip:1.7
+    docker=freesurfer/synthstrip:1.7
 fi
 
 singularity_run ${docker} mri_synthstrip  -i ${t1} -o ./t1_brain/t1.nii.gz -m ./mask/mask.nii.gz ${no_csf_opt}
