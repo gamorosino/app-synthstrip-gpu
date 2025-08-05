@@ -7,8 +7,8 @@
 #set -e
 
 t1=$(jq -r .t1 config.json)
-no_csf=$( j1 -r .no_csf condifg.json )
-use_gpu=$( j1 -r .use_gpu condifg.json )
+no_csf=$( jq -r .no_csf condifg.json )
+use_gpu=$( jq -r .use_gpu condifg.json )
 
 # Custom singularity runner
 singularity_run() {
