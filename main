@@ -16,7 +16,7 @@ singularity_run() {
     singularity exec -e docker://"$1" "${@:2}"
 }
 
-if [ -n "${t1}" ]; then
+if [ "${t1}" == "null" ]; then
     input=$t1
     outputdir=t1_brain
     output=t1.nii.gz
