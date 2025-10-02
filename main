@@ -7,6 +7,7 @@
 #set -e
 
 t1=$(jq -r .t1 config.json)
+t2=$(jq -r .t2 config.json)
 no_csf=$( jq -r .no_csf condifg.json )
 use_gpu=$( jq -r .use_gpu condifg.json )
 
@@ -15,7 +16,18 @@ singularity_run() {
     singularity exec -e docker://"$1" "${@:2}"
 }
 
-mkdir t1_brain
+if [ -n "${t1}" ]; then
+
+    outputdir=t1_brain
+    output=t1.nii.gz
+else
+
+    outputdir=t2_brain
+    output=t2.nii.gz    
+
+fi
+
+mkdir ${outputdir}
 mkdir mask
 
 no_csf_opt=''
@@ -29,5 +41,5 @@ else
     docker=freesurfer/synthstrip:1.7
 fi
 
-singularity_run ${docker} mri_synthstrip  -i ${t1} -o ./t1_brain/t1.nii.gz -m ./mask/mask.nii.gz ${no_csf_opt}
+singularity_run ${docker} mri_synthstrip  -i ${t1} -o ./${outputdir}/${output} -m ./mask/mask.nii.gz ${no_csf_opt}
 
