@@ -1,6 +1,6 @@
 
 # app-synthstrip-gpu
-**SynthStrip: Skull-Stripping for Any Brain Image**
+**An app to run SynthStrip: Skull-Stripping for Any Brain Image**
 
 An automated, containerized workflow that performs robust brain extraction (a.k.a. skull-stripping) on **either a T1-weighted or T2-weighted** anatomical MRI using the Deep Learning FreeSurfer’s tool **SynthStrip** (Hoopes A. et al, 2022)(Kelley W. et al, 2024). Optional flags let you (i) suppress CSF in the mask and (ii) run on GPU nodes for speed.
 
