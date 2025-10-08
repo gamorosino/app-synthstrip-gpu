@@ -13,7 +13,13 @@ use_gpu=$( jq -r .use_gpu config.json )
 
 # Custom singularity runner
 singularity_run() {
-    singularity exec -e docker://"$1" "${@:2}"
+    nvflag=${2}
+    if [ "${nvflag}" -eq 1 ]; then
+        nvcmd=" --nv "
+    else
+       nvcmd="" 
+    fi
+    singularity exec -e ${nvcmd} docker://"$1" "${@:3}"
 }
 
 if [ "${t1}" != "null" ]; then
@@ -35,15 +41,17 @@ mkdir ${outputdir}
 mkdir mask
 
 no_csf_opt=''
+nvflag=0
 [ "${no_csf}"  == "true" ] && { no_csf_opt=" --no-csf "; }
 
 if [ "${use_gpu}" == "true" ]; then
 
-    docker="freesurfer/synthstrip:1.7-gpu --nv "
+    docker="freesurfer/synthstrip:1.7-gpu "
+    nvflag=1
 else
-
     docker=freesurfer/synthstrip:1.7
+    nvflag=0
 fi
 
-singularity_run ${docker} mri_synthstrip  -i ${input} -o ./${outputdir}/${output} -m ./mask/mask.nii.gz ${no_csf_opt}
+singularity_run ${docker} ${nvflag} mri_synthstrip  -i ${input} -o ./${outputdir}/${output} -m ./mask/mask.nii.gz ${no_csf_opt}
 
