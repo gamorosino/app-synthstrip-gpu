@@ -159,6 +159,3 @@ If you use this repository, please cite:
 * Kelley, W., Ngo, N., Dalca, A. V., Fischl, B., Zöllei, L., & Hoffmann, M. (2024, May). **Boosting skull-stripping performance for pediatric brain images**. In *2024 IEEE ISBI* (pp. 1–5). IEEE.
 * Hayashi, S., Caron, B.A., Heinsfeld, A.S. et al. **brainlife.io: a decentralized and open-source cloud platform to support neuroscience research.** Nat Methods 21, 809–813 (2024).
 ---
-
-Want me to drop this into your repo or tailor the Brainlife input names exactly to your app spec?
-```
