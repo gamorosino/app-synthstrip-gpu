@@ -39,7 +39,7 @@ no_csf_opt=''
 
 if [ "${use_gpu}" == "true" ]; then
 
-    docker=freesurfer/synthstrip:1.7-gpu
+    docker="freesurfer/synthstrip:1.7-gpu --nv "
 else
 
     docker=freesurfer/synthstrip:1.7
