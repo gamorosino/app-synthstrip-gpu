@@ -136,9 +136,6 @@ Optional switches:
 * **CPU image:** `freesurfer/synthstrip:1.7`
 * **GPU image:** `freesurfer/synthstrip:1.7-gpu`
 * **Runner:** `singularity exec -e docker://<image> ...`
-
-**GPU passthrough:** If `use_gpu=true`, ensure your site exposes GPUs to Singularity (e.g., `singularity exec --nv ...` or cluster-specific env). Without GPU passthrough, the GPU container will fall back or fail depending on your environment.
-
 ---
 
 ## Troubleshooting
