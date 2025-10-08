@@ -37,7 +37,7 @@ mkdir mask
 no_csf_opt=''
 [ "${no_csf}"  == "true" ] && { no_csf_opt=" --no-csf "; }
 
-if [ "${gpu}" == "true" ]; then
+if [ "${use_gpu}" == "true" ]; then
 
     docker=freesurfer/synthstrip:1.7-gpu
 else
