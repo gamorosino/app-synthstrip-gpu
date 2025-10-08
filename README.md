@@ -139,8 +139,6 @@ Optional switches:
 
 **GPU passthrough:** If `use_gpu=true`, ensure your site exposes GPUs to Singularity (e.g., `singularity exec --nv ...` or cluster-specific env). Without GPU passthrough, the GPU container will fall back or fail depending on your environment.
 
-**Heads-up (variable name):** The current `main` checks `gpu` when deciding the container but reads `use_gpu` from `config.json`. If your environment doesn’t set `gpu`, set **both** `use_gpu=true` in `config.json` **and** export `gpu=true` before running, or update the script to check `use_gpu` directly.
-
 ---
 
 ## Troubleshooting
