@@ -1,135 +1,90 @@
+<h1 align="center">synthstrip gpu</h1>
 
-# app-synthstrip-gpu
-**An app to run SynthStrip: Skull-Stripping for Any Brain Image**
+<p align="center">
+  Skull-strips a T2-weighted image with FreeSurfer SynthStrip (mri_synthstrip, deep learning, GPU or CPU) and outputs the brain-extracted image and a binary brain mask.
+</p>
 
-An automated, containerized workflow that performs robust brain extraction (a.k.a. skull-stripping) on **either a T1-weighted or T2-weighted** anatomical MRI using the Deep Learning FreeSurfer’s tool **SynthStrip** (Hoopes A. et al, 2022)(Kelley W. et al, 2024). Optional flags let you (i) suppress CSF in the mask and (ii) run on GPU nodes for speed.
+<p align="center">
+  <a href="https://github.com/brainlife/abcd-spec"><img src="https://img.shields.io/badge/ABCD_Spec-v1.1-green.svg" alt="ABCD Spec v1.1"></a>
+  <a href="https://doi.org/10.25663/brainlife.app.875"><img src="https://img.shields.io/badge/Brainlife-brainlife.app.875-blue.svg" alt="Run on brainlife.io"></a>
+</p>
 
----
+## At a glance
 
-## Author
+<!-- brainlife-app:begin (generated from the App manifest; edit the manifest, not this block) -->
 
-**Gabriele Amorosino**  
-(email: [gabriele.amorosino@utexas.edu](mailto:gabriele.amorosino@utexas.edu))
+> **Skull-strips a T2-weighted image with FreeSurfer SynthStrip (mri_synthstrip, deep learning, GPU or CPU) and outputs the brain-extracted image and a binary brain mask.**
 
----
+Runs mri_synthstrip from the freesurfer/synthstrip 1.7 container on a single T2-weighted NIfTI. By default it runs on a GPU (the -gpu container with Singularity --nv); set use_gpu to false to run on CPU. Optionally excludes CSF from the mask (no_csf). Use it as a robust, contrast-agnostic brain extraction step before registration or segmentation.
 
-## Description
+| | |
+|---|---|
+| **Inputs** | `neuro/anat/t2w` |
+| **Outputs** | `neuro/anat/t2w` · `neuro/mask` |
+| **Container** | `freesurfer/synthstrip:1.7-gpu` |
+| **Resources** | 1 CPUs · 2 h walltime |
+| **Run it** | [doi.org/10.25663/brainlife.app.875](https://doi.org/10.25663/brainlife.app.875) |
 
-This app wraps `mri_synthstrip` to produce a brain-extracted image and its binary mask from a single anatomical input.  
-- **Inputs:** one of `t1` *or* `t2` (NIfTI `.nii.gz`)  
-- **Modes:** CPU (default) or GPU (NVIDIA)  
-- **Optional:** `--no-csf` to exclude CSF in the final mask
+#### Inputs
 
-Under the hood, the app pulls the appropriate FreeSurfer SynthStrip container and runs:
+| Input | Datatype | Required | Description |
+|---|---|---|---|
+| `t2` | `neuro/anat/t2w` | yes | T2-weighted anatomical image (NIfTI) to skull-strip. |
 
-```
+#### Outputs
 
-mri_synthstrip -i <input> -o <brain.nii.gz> -m <mask.nii.gz> [--no-csf]
+| Output | Datatype | Description |
+|---|---|---|
+| `t2_brain` | `neuro/anat/t2w` | Stripped T2w image (brain) |
+| `mask` | `neuro/mask` | Brain mask |
 
-````
+<details>
+<summary><b>Parameters</b> (2)</summary>
 
-Execution is portable via **Singularity**; the provided `main` script includes PBS headers for use on HPC clusters.
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `no_csf` | boolean | `false` | If you would like to compute the immediate boundary of the brain, excluding surrounding CSF, use the no_csf flag. |
+| `use_gpu` | boolean | `true` | You can disable GPU usage and fall back to the CPU instead; this may cause processing times to increase anywhere from slightly to considerably. |
 
----
+</details>
 
-## Requirements
+<!-- brainlife-app:end -->
 
-- [Singularity](https://sylabs.io/guides/latest/user-guide/)
-- (Optional, GPU) NVIDIA GPUs + drivers available on the host and Singularity GPU passthrough enabled (e.g., `--nv` or appropriate environment on your site)
+## Versions on brainlife.io
 
----
+This repository hosts several Apps, each built from its own branch.
 
-## Inputs
+| App | Branch | Run it | Status |
+|---|---|---|---|
+| SynthStrip (GPU) T2w | [`main`](https://github.com/gamorosino/app-synthstrip-gpu/tree/main) | [doi:10.25663/brainlife.app.875](https://doi.org/10.25663/brainlife.app.875) | current |
+| SynthStrip (GPU) T1w | [`main`](https://github.com/gamorosino/app-synthstrip-gpu/tree/main) | [doi:10.25663/brainlife.app.862](https://doi.org/10.25663/brainlife.app.862) | available |
 
-Provide **exactly one** anatomical input in `config.json`:
+## Running the App
 
-- `t1` — path to T1w image (`.nii.gz`) **or**
-- `t2` — path to T2w image (`.nii.gz`)
+### On brainlife.io
 
-Optional switches:
+Open the App at [doi.org/10.25663/brainlife.app.875](https://doi.org/10.25663/brainlife.app.875), choose `neuro/anat/t2w` from your project, set the parameters and press **Execute**. The results are saved to your project as `neuro/anat/t2w`, `neuro/mask`.
 
-- `no_csf` *(boolean; default: false)* — if `true`, passes `--no-csf` to SynthStrip  
-- `use_gpu` *(boolean; default: false)* — if `true`, uses the GPU container
+### Locally
 
-**Config schema**
+You need [Singularity/Apptainer](https://apptainer.org/) (the App runs in `freesurfer/synthstrip:1.7-gpu`), [`jq`](https://jqlang.github.io/jq/).
 
-```json
-{
-  "t1": null,
-  "t2": null,
-  "no_csf": false,
-  "use_gpu": false
-}
-````
-
-> Provide either `t1` or `t2` (not both). Leave the unused key as `null`.
-
----
-
-## Usage
-
-### Running on Brainlife.io
-
-1. Go to [Brainlife.io](https://brainlife.io) and search for the `app-synthstrip-gpu` app.
-2. Click **Execute**.
-3. Upload one anatomical input (`t1` *or* `t2`) as `.nii.gz`.
-4. (Optional) Upload a `config.json` to enable `no_csf` or `use_gpu`.
-5. Submit. Outputs will include a brain-extracted volume and a binary mask.
-
-#### Via CLI
-
-1. Install the Brainlife CLI: [https://brainlife.io/docs/cli/](https://brainlife.io/docs/cli/)
-2. Login:
-
-   ```bash
-   bl login
-   ```
-3. Run:
-
-   ```bash
-   bl app run --id <app_id> --project <project_id> \
-     --input t1:<t1_dataset_id> \
-     --config config.json
-   ```
-
-   Replace `t1:` with `t2:` if you’re providing a T2w image.
-
----
-
-### Running Locally / On HPC
-
-1. **Clone** and move into the app’s `main/` directory.
-
-2. **Prepare** a `config.json`:
-
-   **Example (T1w, CPU):**
+1. Clone this repository and check out the App's branch (`git checkout main`).
+2. Create `config.json` with the paths to your inputs and the parameters:
 
    ```json
-   { "t1": "sub-01_T1w.nii.gz", "t2": null, "no_csf": false, "use_gpu": false }
+   {
+       "t2": "/path/to/t2/t2",
+       "no_csf": false,
+       "use_gpu": true
+   }
    ```
 
-   **Example (T2w, GPU + no CSF):**
+3. Run `./main`.
 
-   ```json
-   { "t1": null, "t2": "sub-01_T2w.nii.gz", "no_csf": true, "use_gpu": true }
-   ```
+## Troubleshooting
 
-3. **Run**:
-
-   ```bash
-   bash ./main
-   ```
-
-> The script is PBS-ready (`#PBS` headers). On clusters using PBS/Torque, you can submit it with `qsub main`. On SLURM or other schedulers, run the script directly or adapt the header.
-
----
-
-## Outputs
-
-* `t1_brain/t1.nii.gz` **or** `t2_brain/t2.nii.gz` — brain-extracted anatomical volume
-* `mask/mask.nii.gz` — binary brain mask aligned to the input
-
----
+- **Datatype not supported**: Provide exactly one anatomical input (t1 or t2).
 
 ## Container & Implementation Notes
 
@@ -146,11 +101,24 @@ Optional switches:
 
 ---
 
-## Citation
+## Citing
 
-If you use this repository, please cite:
+If you use this App, please cite it, the software it builds on and brainlife.io:
 
-* Hoopes, A., Mora, J. S., Dalca, A. V., Fischl, B., & Hoffmann, M. (2022). **SynthStrip: skull-stripping for any brain image**. *NeuroImage*, 260, 119474.
-* Kelley, W., Ngo, N., Dalca, A. V., Fischl, B., Zöllei, L., & Hoffmann, M. (2024, May). **Boosting skull-stripping performance for pediatric brain images**. In *2024 IEEE ISBI* (pp. 1–5). IEEE.
-* Hayashi, S., Caron, B.A., Heinsfeld, A.S. et al. **brainlife.io: a decentralized and open-source cloud platform to support neuroscience research.** Nat Methods 21, 809–813 (2024).
+- SynthStrip (GPU) T2w. brainlife.io App. [doi:10.25663/brainlife.app.875](https://doi.org/10.25663/brainlife.app.875)
+- Hoopes A, Mora JS, Dalca AV, Fischl B, Hoffmann M. SynthStrip: skull-stripping for any brain image. NeuroImage 260:119474 (2022).
+- Kelley W, Ngo N, Dalca AV, Fischl B, Zöllei L, Hoffmann M. Boosting skull-stripping performance for pediatric brain images. 2024 IEEE ISBI, pp. 1-5 (2024).
+- Hoopes, A., Mora, J. S., Dalca, A. V., Fischl, B., & Hoffmann, M. (2022). **SynthStrip: skull-stripping for any brain image**. *NeuroImage*, 260, 119474.
+- Kelley, W., Ngo, N., Dalca, A. V., Fischl, B., Zöllei, L., & Hoffmann, M. (2024, May). **Boosting skull-stripping performance for pediatric brain images**. In *2024 IEEE ISBI* (pp. 1–5). IEEE.
+- Hayashi, S., Caron, B.A., Heinsfeld, A.S. et al. **brainlife.io: a decentralized and open-source cloud platform to support neuroscience research.** Nat Methods 21, 809–813 (2024). ---
+- Fischl. FreeSurfer. *NeuroImage* 62:774-781 (2012). [doi:10.1016/j.neuroimage.2012.01.021](https://doi.org/10.1016/j.neuroimage.2012.01.021)
+- Hoopes et al. SynthStrip: skull-stripping for any brain image. *NeuroImage* 260:119474 (2022). [doi:10.1016/j.neuroimage.2022.119474](https://doi.org/10.1016/j.neuroimage.2022.119474)
+- Hayashi S, Caron BA, Heinsfeld AS, et al. brainlife.io: a decentralized and open-source cloud platform to support neuroscience research. *Nature Methods* 21:809–813 (2024). [doi:10.1038/s41592-024-02237-2](https://doi.org/10.1038/s41592-024-02237-2)
+- Avesani P, McPherson B, Hayashi S, et al. The open diffusion data derivatives, brain data upcycling via integrated publishing of derivatives and reproducible open cloud services. *Scientific Data* 6:69 (2019). [doi:10.1038/s41597-019-0073-y](https://doi.org/10.1038/s41597-019-0073-y)
+
+## Authors
+
+**Gabriele Amorosino**  
+(email:
+
 ---
